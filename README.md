@@ -2,23 +2,31 @@
 yii2框架的基于new Redis() 方式连接redis, 有效解决fgets, fwrite 操作socket方式的弊端
 
 # 安装方法
-下载文件包, 在vendor文件夹下新建文件夹lihuixu, 解压后复制yii2-phpredis到lihuixu文件夹下
+
+命令安装
+php composer.phar require --prefer-dist diszz/yii2-phpredis dev-master
+或
+composer require --prefer-dist diszz/yii2-phpredis dev-master
+
+或下载文件包, 
+在vendor文件夹下新建文件夹diszz, 解压后复制yii2-phpredis到diszz文件夹下
 结构将是如下结构
+
 ``` php
-vendor\lihuixu\yii2-phpredis\Connection.php
+vendor\diszz\yii2-phpredis\Connection.php
 
 ```
 
 并在vendor\yiisoft\extensions.php 文件末尾添加如下配置:
 
 ``` php
-'lihuixu/yii2-phpredis' =>
+'diszz/yii2-phpredis' =>
     array (
-        'name' => 'lihuixu/yii2-phpredis',
+        'name' => 'diszz/yii2-phpredis',
         'version' => '1.0.0.0',
         'alias' =>
         array (
-            '@yii/phpredis' => $vendorDir . '/lihuixu/yii2-phpredis',
+            '@diszz/phpredis' => $vendorDir . '/diszz/yii2-phpredis',
         ),
     ),
 
@@ -36,18 +44,18 @@ return [
     'timeZone' => 'PRC',
     'components' => [
         'cache' => [
-            //'class' => 'yii\caching\FileCache',
-            'class' => 'yii\phpredis\Cache',
+            //'class' => 'diszz\caching\FileCache',
+            'class' => 'diszz\phpredis\Cache',
         ],
         'redis' => [
-            'class' => 'yii\phpredis\Connection',
+            'class' => 'diszz\phpredis\Connection',
             'hostname' => 'localhost',
             'port' => 6379,
             'database' => 0,
         ],
         'session' => [
-            'class' => 'yii\phpredis\Session',
-            // 'class' => 'yii\web\DbSession',
+            'class' => 'diszz\phpredis\Session',
+            // 'class' => 'diszz\web\DbSession',
             // 'db' => 'mydb',  // 数据库连接的应用组件ID，默认为'db'.
             // 'sessionTable' => 'my_session', // session 数据表名，默认为'session'.
         ],
