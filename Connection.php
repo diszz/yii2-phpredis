@@ -1,6 +1,6 @@
 <?php
 
-namespace yii\phpredis;
+namespace diszz\phpredis;
 
 use yii\base\Component;
 use yii\db\Exception;
