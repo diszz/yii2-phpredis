@@ -19,7 +19,7 @@ use Yii;
  * [
  *     'components' => [
  *         'session' => [
- *             'class' => 'yii\phpredis\Session',
+ *             'class' => 'diszz\phpredis\Session',
  *             'redis' => [
  *                 'hostname' => 'localhost',
  *                 'port' => 6379,
@@ -36,7 +36,7 @@ use Yii;
  * [
  *     'components' => [
  *         'session' => [
- *             'class' => 'yii\phpredis\Session',
+ *             'class' => 'diszz\phpredis\Session',
  *             // 'redis' => 'redis' // id of the connection application component
  *         ],
  *     ],

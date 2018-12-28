@@ -43,6 +43,16 @@ class Connection extends Component
     public $connectionTimeout = 0.0;
     
     /**
+     * 缓存前缀
+     * 需手动添加
+     * $cackeyKey = Yii::$app->redis->buildKey($key);
+     * Yii::$app->redis->exists($cackeyKey);
+     * 
+     * @var string
+     */
+    public $keyPrefix = '';
+    
+    /**
      * Redis connection
      *
      * @var	Redis
@@ -56,7 +66,7 @@ class Connection extends Component
      */
     public function init()
     {
-        \Yii::trace("_redis init ", __CLASS__);
+        \Yii::trace("_redis init ".$this->hostname, __CLASS__);
         
         $this->open();
         
@@ -119,6 +129,11 @@ class Connection extends Component
     public function flushdb()
     {
         return $this->_redis->flushDB();
+    }
+    
+    public function buildKey($key)
+    {
+        return $this->keyPrefix . $key;
     }
     
     /**

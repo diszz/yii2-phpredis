@@ -2,6 +2,7 @@
 
 namespace diszz\phpredis;
 
+use Yii;
 use yii\di\Instance;
 
 class Cache extends \yii\caching\Cache
@@ -24,17 +25,8 @@ class Cache extends \yii\caching\Cache
     {
         \Yii::trace("cache init ", __CLASS__);
         
-		if (is_string($this->redis)) {
-            $this->redis = Yii::$app->get($this->redis);
-        } elseif (is_array($this->redis)) {
-            if (!isset($this->redis['class'])) {
-                $this->redis['class'] = Connection::className();
-            }
-            $this->redis = Yii::createObject($this->redis);
-        }
-        if (!$this->redis instanceof Connection) {
-            throw new InvalidConfigException("Cache::redis must be either a Redis connection instance or the application component ID of a Redis connection.");
-        }
+        parent::init();
+        $this->redis = Instance::ensure($this->redis, Connection::className());
         $this->redis->open();
         
         \Yii::trace("cache init end ", __CLASS__);
