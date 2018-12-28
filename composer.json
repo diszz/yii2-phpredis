@@ -1,6 +1,6 @@
 {
 
-    "name": "lihuixu/yii2-phpredis",
+    "name": "diszz/yii2-phpredis",
 
 
     "type": "yii2-extension",
@@ -9,9 +9,9 @@
     "keywords": ["yii2", "phpredis", "redis", "helper"],
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/lihuixu/yii2-phpredis/issues",
-        "wiki": "https://github.com/lihuixu/yii2-phpredis/wiki",
-        "source": "https://github.com/lihuixu/yii2-phpredis"
+        "issues": "https://github.com/diszz/yii2-phpredis/issues",
+        "wiki": "https://github.com/diszz/yii2-phpredis/wiki",
+        "source": "https://github.com/diszz/yii2-phpredis"
     },
     "authors": [
         {
@@ -28,7 +28,7 @@
     
     "autoload": {
         "psr-4": {
-            "xulihui\\phpredis\\": ""
+            "diszz\\phpredis\\": ""
         }
     }
 }
