@@ -1,0 +1,34 @@
+{
+
+    "name": "lihuixu/yii2-phpredis",
+
+
+    "type": "yii2-extension",
+
+    "description": "The phpredis integration for the Yii framework",
+    "keywords": ["yii2", "phpredis", "redis", "helper"],
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/lihuixu/yii2-phpredis/issues",
+        "wiki": "https://github.com/lihuixu/yii2-phpredis/wiki",
+        "source": "https://github.com/lihuixu/yii2-phpredis"
+    },
+    "authors": [
+        {
+            "name": "xulihui",
+            "email": "xulihui1985@126.com"
+        }
+    ],
+
+
+    "require": {
+        "yiisoft/yii2": "~2.0.0"
+    },
+
+    
+    "autoload": {
+        "psr-4": {
+            "xulihui\\phpredis\\": ""
+        }
+    }
+}
