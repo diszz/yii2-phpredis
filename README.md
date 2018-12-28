@@ -3,12 +3,12 @@ yii2框架的基于new Redis() 方式连接redis, 有效解决fgets, fwrite 操�
 
 # 安装方法
 
-命令安装
+1.命令安装
 php composer.phar require --prefer-dist diszz/yii2-phpredis dev-master
 或
 composer require --prefer-dist diszz/yii2-phpredis dev-master
 
-或下载文件包, 
+2.下载文件包, 
 在vendor文件夹下新建文件夹diszz, 解压后复制yii2-phpredis到diszz文件夹下
 结构将是如下结构
 
