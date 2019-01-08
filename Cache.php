@@ -32,6 +32,17 @@ class Cache extends \yii\caching\Cache
         \Yii::trace("cache init end ", __CLASS__);
     }
 
+	public function buildKey($key)
+    {
+        if (is_string($key)) {
+            //$key = ctype_alnum($key) && StringHelper::byteLength($key) <= 32 ? $key : md5($key);
+        } else {
+            $key = md5(json_encode($key));
+        }
+    
+        return $this->keyPrefix . $key;
+    }
+
 
     /**
      * @inheritdoc
