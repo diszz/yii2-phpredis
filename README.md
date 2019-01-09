@@ -1,5 +1,5 @@
 # yii2-phpredis
-yii2框架的基于new Redis() 方式连接redis, 有效解决fgets, fwrite 操作socket方式的弊端
+yii2框架的基于new Redis() 方式连接redis, 有效解决fgets, fwrite 操作socket方式的弊端. 支持哨兵模式!
 
 # 安装方法
 
