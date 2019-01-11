@@ -8,16 +8,22 @@ use RedisException;
 
 /**
  * 
- * 
+ * 配置
  * 'redis' => [
-            'class' => 'diszz\phpredis\Connection',
-            'hostname' => '127.0.0.1',
-            'password' => null,
-            'port' => 6379,
-            'database' => 0,
-            'keyPrefix' => 'v3redis:',
-            'sentinel' => 1
-        ],
+        'class' => 'diszz\phpredis\Connection',
+        'hostname' => '127.0.0.1',
+        'password' => null,
+        'port' => 6379,
+        'database' => 0,
+        'keyPrefix' => 'v3redis:',
+        'sentinel' => 1
+    ],
+ * 
+ * demo:
+ * 
+ * $key = 'user.online';
+ * $cackeyKey = Yii::$app->redis->buildKey($key);
+ * $isExist = Yii::$app->redis->exists($cackeyKey);
  * 
  * 
  * 
@@ -59,9 +65,6 @@ class Connection extends Component
     
     /**
      * 缓存前缀
-     * 需手动添加
-     * $cackeyKey = Yii::$app->redis->buildKey($key);
-     * Yii::$app->redis->exists($cackeyKey);
      * 
      * @var string
      */
