@@ -135,7 +135,7 @@ class Connection extends Component
             }
             \Yii::trace('_redis $isConnected', __CLASS__);
             
-            if ($this->password !== null) {
+            if ($this->password) {
                 $this->_redis->auth($this->password);
             }
             
@@ -182,7 +182,7 @@ class Connection extends Component
         }
         \Yii::trace('_redis $isConnected', __CLASS__);
 
-        if ($this->password !== null) {
+        if ($this->password) {
             $this->_redis->auth($this->password);
         }
 
