@@ -8,28 +8,17 @@ use RedisException;
 
 /**
  * 
- * 配置
- * 'redis' => [
+ * [
         'class' => 'diszz\phpredis\Connection',
         'hostname' => '127.0.0.1',
         'password' => null,
         'port' => 6379,
         'database' => 0,
-        'keyPrefix' => 'v3redis:',
-        'sentinel' => 1
+        'keyPrefix' => 'v3redis:'
     ],
  * 
- * demo:
- * 
- * $key = 'user.online';
- * $cackeyKey = Yii::$app->redis->buildKey($key);
- * $isExist = Yii::$app->redis->exists($cackeyKey);
- * 
- * 
- * 
- * 
  * Class Connection
- * @package yii\phpredis
+ * @package diszz\phpredis
  */
 class Connection extends Component
 {
@@ -65,6 +54,9 @@ class Connection extends Component
     
     /**
      * 缓存前缀
+     * 需手动添加
+     * $cackeyKey = Yii::$app->redis->buildKey($key);
+     * Yii::$app->redis->exists($cackeyKey);
      * 
      * @var string
      */
@@ -84,13 +76,39 @@ class Connection extends Component
     public $sentinel = 0;
     
     /**
+     * 是否开启集群模式
+     * @var int
+     */
+    public $cluster = 0;
+    
+    /**
+     * 集群服务器配置
+     * 
+     * 'servers' => ['127.0.0.1:7000', '127.0.0.1:7001', '127.0.0.1:7002']
+     * 
+     * @var array
+     */
+    public $servers = [];
+    
+    /**
+     * 集群参数
+     *
+     * @var array
+     */
+    protected $optionParam = array(
+        'timeOut' => 3,
+        'readTime' => 3,
+        'persistent' => true //是否复用链接
+    );
+    
+    /**
      * Initializes the redis Session component.
      * This method will initialize the [[redis]] property to make sure it refers to a valid redis connection.
      * @throws InvalidConfigException if [[redis]] is invalid.
      */
     public function init()
     {
-        \Yii::trace("_redis init ".$this->hostname, __CLASS__);
+        \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__." _redis init ".$this->hostname, __CLASS__);
         
         $this->open();
         
@@ -114,16 +132,16 @@ class Connection extends Component
     public function open()
     {
         if ($this->_redis !== null) {
-            \Yii::trace("_redis had open", __CLASS__);
+            \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis had open', __CLASS__);
             return;
         }
         
-        $this->_redis = new \Redis();
-        \Yii::trace("_redis new class", __CLASS__);
-        
-        //开启哨兵模式
+        //使用哨兵模式
         if ($this->sentinel)
         {
+            $this->_redis = new \Redis();
+            \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis new class', __CLASS__);
+            
             if ($this->unixSocket !== null) {
                 $isConnected = $this->_redis->connect($this->unixSocket);
             } else {
@@ -135,13 +153,13 @@ class Connection extends Component
             }
             \Yii::trace('_redis $isConnected', __CLASS__);
             
-            if ($this->password) {
+            if ($this->password !== null) {
                 $this->_redis->auth($this->password);
             }
             
             if ($this->database !== null) {
                 $this->_redis->select($this->database);
-                \Yii::trace('_redis select '. $this->database, __CLASS__);
+                \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis select '. $this->database, __CLASS__);
             }
             
             //获取主库列表及其状态信息
@@ -150,7 +168,7 @@ class Connection extends Component
             //\Yii::trace('_redis select '. $this->database, __CLASS__);
             
             $masterInfo = $this->parseArrayResult($sentinelInfo);
-            \Yii::trace('_redis $masterInfo '. json_encode($masterInfo), __CLASS__);
+            \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis $masterInfo '. json_encode($masterInfo), __CLASS__);
             //var_dump($masterInfo);
             
             if (empty($masterInfo['ip']) || empty($masterInfo['port']))
@@ -158,7 +176,7 @@ class Connection extends Component
                 $masterInfo = current($masterInfo);
                 if (empty($masterInfo['ip']) || empty($masterInfo['port']))
                 {
-                    \Yii::error('_redis select '. $this->database, __CLASS__);
+                    \Yii::error(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis select '. $this->database, __CLASS__);
                     throw new RedisException('redis conf error');
                 }
             }
@@ -166,31 +184,81 @@ class Connection extends Component
             $this->hostname = $masterInfo['ip'];
             $this->port = $masterInfo['port'];
             
-            \Yii::info('_redis $masterInfo '. json_encode([$this->hostname, $this->port]), __CLASS__);
+            \Yii::info(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis $masterInfo '. json_encode([$this->hostname, $this->port]), __CLASS__);
+            
+            if ($this->unixSocket !== null) {
+                $isConnected = $this->_redis->connect($this->unixSocket);
+            } else {
+                $isConnected = $this->_redis->connect($this->hostname, $this->port, $this->connectionTimeout);
+            }
+            
+            if ($isConnected === false) {
+                throw new RedisException('Connect to redis server error.');
+            }
+            
+            if ($this->password !== null) {
+                $this->_redis->auth($this->password);
+            }
+            
+            if ($this->database !== null) {
+                $this->_redis->select($this->database);
+                \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis select '. $this->database, __CLASS__);
+            }
+            
+            \Yii::trace('_redis $isConnected', __CLASS__);
         }
-        
-        
-        
-        if ($this->unixSocket !== null) {
-            $isConnected = $this->_redis->connect($this->unixSocket);
-        } else {
-            $isConnected = $this->_redis->connect($this->hostname, $this->port, $this->connectionTimeout);
+        //使用集群模式
+        else if ($this->cluster)
+        {
+            if (empty($this->servers))
+            {
+                \Yii::error(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis select '. $this->servers, __CLASS__);
+                throw new RedisException('redisCluster servers error');
+            }
+            
+            $this->_redis = new \RedisCluster(
+                null, 
+                $this->servers, 
+                $this->optionParam['timeOut'],
+                $this->optionParam['readTime'],
+                $this->optionParam['persistent']
+            );
+            
+            //主从节点 读取分配策略
+            $this->_redis->setOption(\RedisCluster::OPT_SLAVE_FAILOVER, \RedisCluster::FAILOVER_DISTRIBUTE_SLAVES);
+            
+            \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redisCluster $isConnected', __CLASS__);
+        }
+        //普通模式
+        else 
+        {
+            $this->_redis = new \Redis();
+            \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__." _redis new class", __CLASS__);
+            
+            if ($this->unixSocket !== null) {
+                $isConnected = $this->_redis->connect($this->unixSocket);
+            } else {
+                $isConnected = $this->_redis->connect($this->hostname, $this->port, $this->connectionTimeout);
+            }
+            
+            if ($isConnected === false) {
+                throw new RedisException('Connect to redis server error.');
+            }
+            
+            if ($this->password !== null) {
+                $this->_redis->auth($this->password);
+            }
+            
+            if ($this->database !== null) {
+                $this->_redis->select($this->database);
+                \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis select '. $this->database, __CLASS__);
+            }
+            
+            \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis $isConnected', __CLASS__);
         }
 
-        if ($isConnected === false) {
-            throw new RedisException('Connect to redis server error.');
-        }
-        \Yii::trace('_redis $isConnected', __CLASS__);
-
-        if ($this->password) {
-            $this->_redis->auth($this->password);
-        }
-
-        if ($this->database !== null) {
-            $this->_redis->select($this->database);
-            \Yii::trace('_redis select '. $this->database, __CLASS__);
-        }
         
+        //------------------------------------------
     }
     
     //这个方法可以将以上sentinel返回的信息解析为数组
@@ -242,7 +310,7 @@ class Connection extends Component
      */
     public function __call($name, $params)
     {
-        \Yii::trace('_redis call '. $name, __CLASS__);
+        \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis call '. $name, __CLASS__);
         return call_user_func_array([$this->_redis, $name], $params);
     }
 }
