@@ -98,7 +98,7 @@ class Connection extends Component
     protected $optionParam = array(
         'timeOut' => 3,
         'readTime' => 3,
-        'persistent' => true //是否复用链接
+        'persistent' => false //是否复用链接
     );
     
     /**
@@ -108,8 +108,6 @@ class Connection extends Component
      */
     public function init()
     {
-        \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__." _redis init ".$this->hostname, __CLASS__);
-        
         $this->open();
         
         parent::init();
@@ -310,7 +308,14 @@ class Connection extends Component
      */
     public function __call($name, $params)
     {
-        \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis call '. $name, __CLASS__);
+        \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis call '. $name .' '. json_encode($params), __CLASS__);
+        
+        if (!method_exists($this->_redis, $name))
+        {
+            \Yii::error(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redis call '. $name .' '. json_encode($params), __CLASS__);
+            throw new RedisException('redis conf error');
+        }
+        
         return call_user_func_array([$this->_redis, $name], $params);
     }
 }
