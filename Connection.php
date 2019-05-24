@@ -223,7 +223,7 @@ class Connection extends Component
             );
             
             //主从节点 读取分配策略
-            $this->_redis->setOption(\RedisCluster::OPT_SLAVE_FAILOVER, \RedisCluster::FAILOVER_DISTRIBUTE_SLAVES);
+            //$this->_redis->setOption(\RedisCluster::OPT_SLAVE_FAILOVER, \RedisCluster::FAILOVER_DISTRIBUTE_SLAVES);
             
             \Yii::trace(__CLASS__.' '.__FUNCTION__.' '.__LINE__.' _redisCluster $isConnected', __CLASS__);
         }
