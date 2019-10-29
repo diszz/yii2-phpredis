@@ -8,15 +8,47 @@ use RedisException;
 
 /**
  * 
- * [
-        'class' => 'diszz\phpredis\Connection',
-        'hostname' => '127.0.0.1',
-        'password' => null,
-        'port' => 6379,
-        'database' => 0,
-        'keyPrefix' => 'v3redis:'
-    ],
+ * 基于yii2的redis扩展类
  * 
+ * 普通模式配置方法:
+ * 'components' => [
+        'redis' => [
+            'class' => 'diszz\phpredis\Connection',
+            'hostname' => '127.0.0.1',
+            'password' => null,//qweasdzxc123456
+            'port' => 6379,
+            'database' => 0,
+            'keyPrefix' => 'v3redis:',
+        ],
+ *
+ *
+ * 哨兵模式配置方法:
+ * 'components' => [
+        'redis' => [
+            'class' => 'diszz\phpredis\Connection',
+            'hostname' => '127.0.0.1',
+            'password' => null,//qweasdzxc123456
+            'port' => 6379,
+            'database' => 0,
+            'keyPrefix' => 'v3redis:',
+            'sentinel' => 1,
+        ],
+ *
+ * 集群模式配置方法:
+ * 'components' => [
+        'redis' => [
+            'class' => 'diszz\phpredis\Connection',
+            'hostname' => '127.0.0.1',
+            'password' => null,//qweasdzxc123456
+            'port' => 6379,
+            'database' => 0,
+            'keyPrefix' => 'v3redis:',
+            'sentinel' => 0,
+            'cluster' => 1,
+            'servers' => ['127.0.0.1:7000', '127.0.0.1:7001', '127.0.0.1:7002']
+        ],
+ *
+ *
  * Class Connection
  * @package diszz\phpredis
  */

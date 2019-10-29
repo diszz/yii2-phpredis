@@ -101,7 +101,7 @@ return [
 
 ```
 
-# 再也没有出现这个报错 -_-
+# 解决了 yii2-redis 的这个bug -_-
 
 ``` php
 2018-03-05 17:28:51 [-][-][-][error][yii\db\Exception] exception 'yii\db\Exception' with message 'Failed to read from socket.
