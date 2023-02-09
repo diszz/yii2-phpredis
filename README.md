@@ -1,6 +1,8 @@
 # yii2-phpredis
 yii2框架的基于new Redis() 方式连接redis, 有效解决fgets, fwrite 操作socket方式的弊端. 支持哨兵模式!
 
+2023年2月9号增加支持redis mq 队列功能, 增加 Queue.php 文件.
+
 # 安装方法
 
 1.命令安装
@@ -59,6 +61,17 @@ return [
             // 'db' => 'mydb',  // 数据库连接的应用组件ID，默认为'db'.
             // 'sessionTable' => 'my_session', // session 数据表名，默认为'session'.
         ],
+	'queue' => [
+              'class' => 'diszz\phpredis\Queue',
+              'keyPrefix' => 'saas.queue:',
+              'maxRunTimelong' => 299,//进程最大运行时间,单位秒
+              'phpbin' => 'php',
+              'consoleStartAction' => 'mq/start',//把此命令加到crontab里
+              'consoleListenAction' => 'mq/listen',
+              'channels' => [
+                  'mq/test-func' => 2,//启动的最大进程数,最少2个
+              ],
+          ],
         
  ....
 
@@ -98,6 +111,19 @@ return [
             Yii::$app->session->set($key, $value);
             
         }
+
+```
+
+``` php
+
+//队列示例
+
+//添加到计划任务
+php ./yii mq/start
+
+//添加业务到队列
+Yii::$app->queue->publish('mq/test-func', ['starttime' => $_logs['starttime1']]);
+
 
 ```
 
