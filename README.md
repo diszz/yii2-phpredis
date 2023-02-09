@@ -66,8 +66,8 @@ return [
               'keyPrefix' => 'saas.queue:',
               'maxRunTimelong' => 299,//进程最大运行时间,单位秒
               'phpbin' => 'php',
-              'consoleStartAction' => 'mq/start',//把此命令加到crontab里
-              'consoleListenAction' => 'mq/listen',
+              'consoleStartAction' => 'queue/start',//把此命令加到crontab里
+              'consoleListenAction' => 'queue/listen',
               'channels' => [
                   'mq/test-func' => 2,//启动的最大进程数,最少2个
               ],
@@ -118,11 +118,13 @@ return [
 
 //队列示例
 
+把 QueueController.php放到console\controller文件夹内
+
 //添加到计划任务
-php ./yii mq/start
+php ./yii queue/start
 
 //添加业务到队列
-Yii::$app->queue->publish('mq/test-func', ['starttime' => $_logs['starttime1']]);
+Yii::$app->queue->publish('queue/test-func', ['starttime' => $_logs['starttime1']]);
 
 
 ```
